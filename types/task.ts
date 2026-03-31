@@ -7,4 +7,4 @@ export default interface Task {
 }
 
 export type createTaskInput = Omit<Task, "id">;
-export type TaskParams = { id: string };
+export type QueryParams = { id: string };

@@ -1,4 +1,4 @@
-import Task, { createTaskInput, TaskParams } from "../../types/task";
+import Task, { createTaskInput, QueryParams } from "../../types/task";
 import { db } from "../db/connection";
 import { Request, Response } from "express";
 import { tasks } from "../db/schema";
@@ -13,11 +13,11 @@ export const getTasks = async (_req: Request, res: Response) => {
   }
 };
 
-export const getTaskById = async (req: Request<TaskParams>, res: Response) => {
+export const getTaskById = async (req: Request<QueryParams>, res: Response) => {
   try {
     const { id } = req.params;
     const task = await db.query.tasks.findFirst({
-      where: (task, { eq }) => eq(task.id, id),
+      where: (tasks, { eq }) => eq(tasks.id, id),
     });
     if (!task) {
       res.type("text").status(404).send("Task not found");
@@ -48,7 +48,7 @@ export const createTask = async (req: Request, res: Response) => {
   }
 };
 
-export const updateTask = async (req: Request<TaskParams>, res: Response) => {
+export const updateTask = async (req: Request<QueryParams>, res: Response) => {
   try {
     const { id } = req.params;
 
@@ -67,7 +67,7 @@ export const updateTask = async (req: Request<TaskParams>, res: Response) => {
   }
 };
 
-export const deleteTask = async (req: Request<TaskParams>, res: Response) => {
+export const deleteTask = async (req: Request<QueryParams>, res: Response) => {
   try {
     const { id } = req.params;
     await db.delete(tasks).where(eq(tasks.id, id));
