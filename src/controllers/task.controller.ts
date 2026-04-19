@@ -1,15 +1,17 @@
-import Task, { createTaskInput, QueryParams } from "../../types/task";
-import { db } from "../db/connection";
-import { Request, Response } from "express";
-import { tasks } from "../db/schema";
+import type { Task, CreateTaskInput, QueryParams } from "../types/task.js";
+import { db } from "../db/connection.js";
+import type { Request, Response } from "express";
+import { tasks } from "../db/schema.js";
 import { eq } from "drizzle-orm";
 
-export const getTasks = async (_req: Request, res: Response) => {
+export const getTasks = async (req: Request, res: Response) => {
   try {
-    const taskList = await db.query.tasks.findMany();
+    const taskList = await db.query.tasks.findMany({
+      where: (tasks, { eq }) => eq(tasks.userId, req.user.userId),
+    });
     res.status(200).json(taskList);
   } catch (e) {
-    console.log(e);
+    console.log("ERROR: ", e);
   }
 };
 
@@ -31,15 +33,12 @@ export const getTaskById = async (req: Request<QueryParams>, res: Response) => {
 export const createTask = async (req: Request, res: Response) => {
   try {
     const { summary, details, completed, userId } = req.body as Task;
-    if (!userId) {
-      res.type("application/json").status(422).send("userId is required");
-      return;
-    }
-    const newTask: createTaskInput = {
+
+    const newTask: CreateTaskInput = {
       summary,
-      details,
+      details: details ?? null,
       completed,
-      userId,
+      userId: req.user.userId,
     };
     const [createdTask] = await db.insert(tasks).values(newTask).returning();
     res.status(201).json(createdTask);

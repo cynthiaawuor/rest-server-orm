@@ -1,10 +1,11 @@
-import { Request, Response } from "express";
-import { db } from "../db/connection";
-import { users } from "../db/schema";
-import { QueryParams } from "../../types/task";
-import { eq } from "drizzle-orm";
+import type { Request, Response } from "express";
+import { db } from "../db/connection.js";
+import { users } from "../db/schema.js";
 
-export const getUser = async (_req: Request, res: Response) => {
+import { eq } from "drizzle-orm";
+import type { QueryParams } from "../types/task.js";
+
+export const getUsers = async (_req: Request, res: Response) => {
   try {
     const users = await db.query.users.findMany();
 
@@ -19,6 +20,9 @@ export const getUserById = async (req: Request<QueryParams>, res: Response) => {
     const { id } = req.params;
     const user = await db.query.users.findFirst({
       where: (users, { eq }) => eq(users.id, id),
+      with: {
+        tasks: true,
+      },
     });
     res.status(200).json(user);
   } catch (e) {
@@ -29,10 +33,12 @@ export const getUserById = async (req: Request<QueryParams>, res: Response) => {
 
 export const createUser = async (req: Request, res: Response) => {
   try {
-    const { age, name } = req.body;
+    const { age, name, email, password } = req.body;
     const newUser = {
       name,
       age,
+      email,
+      password,
     };
     await db.insert(users).values(newUser);
     res.status(201).type("text").send("User created successfully");

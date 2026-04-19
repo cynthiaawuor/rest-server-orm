@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import {
   pgTable,
   uuid,
@@ -11,8 +12,10 @@ import {
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
-  name: varchar("name", { length: 100 }).notNull().unique(),
+  name: varchar("name", { length: 100 }).notNull(),
   age: integer("age").notNull(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  password: varchar("password", { length: 255 }).notNull(),
 });
 
 export const tasks = pgTable("tasks", {
@@ -44,3 +47,14 @@ export const taskTags = pgTable(
   },
   (t) => [unique("custom_name").on(t.tagId, t.taskId)],
 );
+
+export const userRelations = relations(users, ({ many }) => ({
+  tasks: many(tasks),
+}));
+
+export const taskRelations = relations(tasks, ({ one }) => ({
+  user: one(users, {
+    fields: [tasks.userId],
+    references: [users.id],
+  }),
+}));

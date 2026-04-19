@@ -1,4 +1,4 @@
-export default interface Task {
+export interface Task {
   id: string;
   summary: string;
   details?: string | null;
@@ -6,5 +6,5 @@ export default interface Task {
   userId: string;
 }
 
-export type createTaskInput = Omit<Task, "id">;
+export type CreateTaskInput = Omit<Task, "id">;
 export type QueryParams = { id: string };

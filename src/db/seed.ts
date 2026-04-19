@@ -1,5 +1,7 @@
-import { db } from "./connection";
-import { users, tasks, tags, taskTags } from "./schema";
+import "dotenv/config";
+
+import { db } from "./connection.js";
+import { users, tasks, tags, taskTags } from "./schema.js";
 
 async function seed() {
   console.log("Starting database seed...");
@@ -12,12 +14,23 @@ async function seed() {
     await db.delete(users);
     //create demo users
     console.log("creating demo users");
-    const [demoUser] = await db
+    const [user1, user2] = await db
       .insert(users)
-      .values({ name: "Reduzer", age: 2 })
+      .values([
+        {
+          name: "User1",
+          age: 2,
+          email: "user1@gmail.com",
+          password: "user123",
+        },
+        {
+          name: "User2",
+          age: 35,
+          email: "user2@gmail.com",
+          password: "user234",
+        },
+      ])
       .returning();
-
-    console.log(demoUser);
 
     console.log("creating demo tasks");
     const [jog, pray, code] = await db
@@ -26,17 +39,22 @@ async function seed() {
         {
           summary: "Jogging",
           details: "Jogging in the morning for atleast 30 mins",
-          userId: demoUser.id,
+          userId: user1?.id ?? `${Date.now()}`,
         },
         {
           summary: "Praying",
           details: "Attending Friday Kesha at St. Paul's",
-          userId: demoUser.id,
+          userId: user2?.id ?? `${Date.now()}`,
         },
         {
           summary: "Coding",
           details: "Completing the remaining tasks",
-          userId: demoUser.id,
+          userId: user1?.id ?? `${Date.now()}`,
+        },
+        {
+          summary: "End year project",
+          details: "Completing for end year project and pitching",
+          userId: user2?.id ?? `${Date.now()}`,
         },
       ])
       .returning();

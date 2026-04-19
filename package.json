@@ -10,15 +10,24 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "drizzle-orm": "^0.45.1",
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^17.4.2",
+    "drizzle-orm": "^0.45.2",
+    "drizzle-seed": "^0.3.1",
     "express": "^5.2.1",
+    "express-validator": "^7.3.2",
+    "jsonwebtoken": "^9.0.3",
     "pg": "^8.20.0",
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^25.6.0",
     "@types/pg": "^8.20.0",
     "@types/swagger-ui-express": "^4.1.8",
-    "drizzle-kit": "^0.31.10"
+    "drizzle-kit": "^0.31.10",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.2"
   }
 }

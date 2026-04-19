@@ -5,14 +5,17 @@ import {
   getTaskById,
   getTasks,
   updateTask,
-} from "../controllers/task.controller";
+} from "../controllers/task.controller.js";
+import { authMiddleware } from "../middleware/auth.js";
 
-const route = Router();
+const router = Router();
 
-route.get("/", getTasks);
-route.get("/:id", getTaskById);
-route.post("/", createTask);
-route.patch("/:id", updateTask);
-route.delete("/:id", deleteTask);
+router.use(authMiddleware);
 
-export default route;
+router.get("/", getTasks);
+router.get("/:id", getTaskById);
+router.post("/", createTask);
+router.patch("/:id", updateTask);
+router.delete("/:id", deleteTask);
+
+export default router;
