@@ -9,7 +9,7 @@ export const getTags = async (_req: Request, res: Response) => {
     const tagsList = await db.query.tags.findMany();
     res.status(200).json(tagsList);
   } catch (e) {
-    console.log("ERROR: ", e);
+    res.status(500).json(`${e}`);
   }
 };
 
@@ -25,7 +25,7 @@ export const getTagById = async (req: Request<QueryParams>, res: Response) => {
       res.status(200).json(tag);
     }
   } catch (error) {
-    console.log(error);
+    res.status(500).json(`${error}`);
   }
 };
 

@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { relations, type InferInsertModel } from "drizzle-orm";
 import {
   pgTable,
   uuid,
@@ -9,6 +9,7 @@ import {
   pgEnum,
   unique,
 } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -58,3 +59,24 @@ export const taskRelations = relations(tasks, ({ one }) => ({
     references: [users.id],
   }),
 }));
+
+// Zod Schemas
+export const userInsertSchema = createInsertSchema(users).omit({ id: true });
+export const loginSchema = userInsertSchema.omit({ age: true, name: true });
+export const taskInsertSchema = createInsertSchema(tasks);
+export const tagsInsertSchema = createInsertSchema(tags);
+export const updateUserSchema = userInsertSchema
+  .partial()
+  .refine((data) => Object.values(data).some((val) => val != undefined), {
+    error: "At least one property must be provided",
+  });
+export const updateTaskSchema = taskInsertSchema
+  .partial()
+  .refine((data) => Object.values(data).some((val) => val != undefined), {
+    error: "At least one property must be provided",
+  });
+export const updateTagsSchema = tagsInsertSchema
+  .partial()
+  .refine((data) => Object.values(data).some((val) => val != undefined), {
+    error: "At least one property must be provided",
+  });

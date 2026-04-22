@@ -26,7 +26,6 @@ export const getUserById = async (req: Request<QueryParams>, res: Response) => {
     });
     res.status(200).json(user);
   } catch (e) {
-    console.log(e);
     res.status(404).json({ message: "user not found" });
   }
 };
@@ -71,7 +70,6 @@ export const deleteUser = async (req: Request<QueryParams>, res: Response) => {
     await db.delete(users).where(eq(users.id, id));
     res.status(204).send();
   } catch (e) {
-    console.log(e);
     res.type("application/json").json({ error: "could not delete user" });
   }
 };

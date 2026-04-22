@@ -20,10 +20,10 @@ export const registerUser = async (req: Request, res: Response) => {
       email,
       password: hashedPassword,
     };
-    await db.insert(users).values(newUser);
+    const createdUser = await db.insert(users).values(newUser);
 
     const userPayload = {
-      userId: newUser.email,
+      userId: createdUser.userId,
     };
     const token = jwt.sign(userPayload, `${process.env.SECRET_KEY}`, {
       expiresIn: "1d",
@@ -31,7 +31,6 @@ export const registerUser = async (req: Request, res: Response) => {
 
     res.status(201).json({ token, message: "User registered successfully" });
   } catch (err) {
-    console.log(err);
     res.status(500).json({ message: "Error registering user" });
   }
 };

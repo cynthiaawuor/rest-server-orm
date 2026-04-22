@@ -11,7 +11,7 @@ export const getTasks = async (req: Request, res: Response) => {
     });
     res.status(200).json(taskList);
   } catch (e) {
-    console.log("ERROR: ", e);
+    res.status(500).json(`${e}`);
   }
 };
 
@@ -27,7 +27,7 @@ export const getTaskById = async (req: Request<QueryParams>, res: Response) => {
       res.status(200).json(task);
     }
   } catch (error) {
-    console.log(error);
+    res.status(500).json(`${error}`);
   }
 };
 export const createTask = async (req: Request, res: Response) => {
