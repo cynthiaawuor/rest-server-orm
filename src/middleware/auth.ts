@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import type { AuthContext } from "../types/auth/auth-context.js";
 
 export const authMiddleware = (
   req: Request,
@@ -16,7 +17,8 @@ export const authMiddleware = (
     const decodedToken = jwt.verify(
       `${authHeader[1]}`,
       `${process.env.SECRET_KEY}`,
-    );
+    ) as AuthContext;
+
     req.user = decodedToken;
   } catch (err) {
     res.status(401).json({ error: "Unauthorized Access" });

@@ -5,13 +5,19 @@ import { users } from "../db/schema.js";
 import { eq } from "drizzle-orm";
 import type { QueryParams } from "../types/task.js";
 
+export const isAdmin = (req: Request) => {
+  return req.user.role === "admin";
+};
 export const getUsers = async (_req: Request, res: Response) => {
   try {
+    if (!isAdmin) {
+      res.status(400).json({ message: "Unauthorized access" });
+    }
     const users = await db.query.users.findMany();
 
     res.status(200).json(users);
   } catch (e) {
-    res.status(404).json("Not found");
+    res.status(404).json("No user Exist");
   }
 };
 
@@ -32,17 +38,25 @@ export const getUserById = async (req: Request<QueryParams>, res: Response) => {
 
 export const createUser = async (req: Request, res: Response) => {
   try {
-    const { age, name, email, password } = req.body;
+    const { age, name, email, password, role } = req.body;
     const newUser = {
       name,
       age,
       email,
       password,
+      role,
     };
+    const user = await db.query.users.findFirst({
+      where: (users, { eq }) => eq(users.email, email),
+    });
+    if (user) {
+      return res.status(401).json({ error: "user with the same email exists" });
+    }
     await db.insert(users).values(newUser);
+
     res.status(201).type("text").send("User created successfully");
   } catch (error) {
-    res.type("text").send("Couldn't create user");
+    res.type("text").send(`${error}`);
   }
 };
 
